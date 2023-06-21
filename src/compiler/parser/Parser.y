@@ -117,6 +117,14 @@ functionDeclareStatement
         functionDeclareStatement->params = $2;
         functionDeclareStatement->functionBody = $4;
       }
+    | IDENTIFIER FUNCTIONDEC functionBody SEMICOLON {
+        AST_FunctionDeclareStatement* functionDeclareStatement
+            = new AST_FunctionDeclareStatement();
+        functionDeclareStatement->functionName = $1;
+        functionDeclareStatement->params 
+            = new std::vector<AST_IdentifierValue*>();
+        functionDeclareStatement->functionBody = $3;
+      }
     ;
 
 args

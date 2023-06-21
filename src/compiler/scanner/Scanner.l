@@ -15,9 +15,9 @@
 
 %%
 
-[:space:]*
+[[:space:]]*
 
-[:alpha:]+[:alnum:]* {
+[[:alpha:]][[:alnum:]]* {
     yylval->idVal = new AST_IdentifierValue(yytext);
     return IDENTIFIER;
 }
