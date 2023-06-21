@@ -1,13 +1,15 @@
+SCANDIR = src/compiler/scanner
 PARSEDIR = src/compiler/parser
 
 CPPFILES = \
 	$(wildcard src/*.cpp) \
 	$(wildcard src/compiler/*.cpp) \
-	src/compiler/parser/parser.cpp
+	$(SCANDIR)/Scanner.cpp \
+	$(PARSEDIR)/Parser.cpp 
 
 OBJFILES = $(addprefix build/, $(CPPFILES:.cpp=.o))
 OUT = build/Cry
-CFLAGS = -g -Wall -Wextra -Wpedantic -Werror
+CFLAGS = -g -Wall -Wextra -Wpedantic -Werror -Wno-unused-function
 LDLIBS = -lstdc++
 
 .PHONY: all
@@ -16,8 +18,11 @@ all: $(OUT)
 $(OUT): $(OBJFILES)
 	g++ -o $@ $^
 
-$(PARSEDIR)/parser.cpp: $(PARSEDIR)/parser.y
-	bison -d -o $(PARSEDIR)/parser.cpp $(PARSEDIR)/parser.y
+$(SCANDIR)/Scanner.cpp: $(SCANDIR)/Scanner.l $(PARSEDIR)/Parser.hpp
+	flex --header-file=Scanner.hpp -o $(SCANDIR)/Scanner.cpp $(SCANDIR)/Scanner.l
+
+$(PARSEDIR)/Parser.cpp $(PARSEDIR)/Parser.hpp: $(PARSEDIR)/Parser.y
+	bison -d -o $(PARSEDIR)/Parser.cpp $(PARSEDIR)/Parser.y
 
 build/%.o: %.cpp
 	mkdir -p $(dir $@)
@@ -25,5 +30,7 @@ build/%.o: %.cpp
 
 .PHONY: clean
 clean:
-	rm -f $(OBJFILES) $(OUT) $(PARSEDIR)/parser.cpp
+	rm -f $(OBJFILES) $(OUT) \
+		$(SCANDIR)/Scanner.cpp \
+		$(PARSEDIR)/Parser.cpp $(PARSEDIR)/Parser.hpp
 

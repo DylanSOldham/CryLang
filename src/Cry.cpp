@@ -10,11 +10,9 @@ bool validateSrcPath(const std::string& srcDir)
     
     if (srcDir.length() < extensionLength) return false;
     
-    bool validExtension = 0 == srcDir.compare(
+    bool validExtension = srcDir.compare(
             srcDir.length() - extensionLength,
-            extensionLength,
-            extensionString
-            );
+            extensionLength, extensionString) == 0;
 
     if (!validExtension)
     {
@@ -49,6 +47,6 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    std::cout << "Cry: Malformed syntax\n";
+    std::cout << "Cry: Malformed command syntax\n";
     return -1;
 }

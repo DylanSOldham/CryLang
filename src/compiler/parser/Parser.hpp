@@ -43,6 +43,17 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 45 "src/compiler/parser/Parser.y"
+
+    #include <iostream>
+    #include "AST.h"
+
+    typedef void* yyscan_t;
+
+    void yyerror(AST** result, yyscan_t scanner, const char* error);
+
+#line 57 "src/compiler/parser/Parser.hpp"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -74,15 +85,24 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 9 "src/compiler/parser/parser.y"
+#line 5 "src/compiler/parser/Parser.y"
 
     int category;
-    int intVal;
-    float floatVal;
-    bool boolVal;
-    char* strVal;
+    AST_IdentifierValue* idVal;
+    AST_IntegerValue* intVal;
+    AST_FloatValue* floatVal;
+    AST_BoolValue* boolVal;
+    AST_StringValue* strVal;
+    AST* astVal;
+    AST_FunctionBody* functionBodyVal;
+    AST_BindStatement* bindStatementVal;
+    AST_Statement* statementVal;
+    AST_Expression* exprVal;
+    AST_Value* valueVal;
+    std::vector<AST_Expression*>* argsVal;
+    std::vector<AST_IdentifierValue*>* paramsVal;
 
-#line 86 "src/compiler/parser/parser.hpp"
+#line 106 "src/compiler/parser/Parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -91,8 +111,7 @@ typedef union YYSTYPE YYSTYPE;
 #endif
 
 
-extern YYSTYPE yylval;
 
-int yyparse (void);
+int yyparse (AST** result, yyscan_t scanner);
 
 #endif /* !YY_YY_SRC_COMPILER_PARSER_PARSER_HPP_INCLUDED  */
