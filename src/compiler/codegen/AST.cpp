@@ -6,8 +6,20 @@ std::string AST_IdentifierValue::genGraphVis(std::string parent)
                   + "_" + identifier + "\n";
 }
 
+std::string AST_BoolValue::genGraphVis(std::string parent) {
+    return parent + " -> " + "BOOL" + std::to_string(AST::nodeId++)
+         + "_" + (value ? "true" : "false") + "\n";
+}
+
 std::string AST_IntegerValue::genGraphVis(std::string parent) {
-    return parent + " -> " + std::to_string(value) + "\n";
+    return parent + " -> " + "INT" + std::to_string(AST::nodeId++) 
+         + "_" + std::to_string(value) + "\n";
+}
+
+std::string AST_FloatValue::genGraphVis(std::string parent) {
+    return parent + " -> " + "\"FLOAT" 
+         + std::to_string(AST::nodeId++) + "_" 
+         + std::to_string(value) + "\"\n";
 }
 
 std::string AST_StringValue::genGraphVis(std::string parent)

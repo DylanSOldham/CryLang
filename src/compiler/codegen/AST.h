@@ -41,6 +41,8 @@ class AST_BoolValue : public AST_Value {
 public:	
 	bool value;
     AST_BoolValue(bool value) : value(value) {}
+
+    std::string genGraphVis(std::string parent) override;
 };
 
 class AST_IntegerValue : public AST_Value {
@@ -55,6 +57,8 @@ class AST_FloatValue : public AST_Value {
 public:
 	float value;
     AST_FloatValue(float value) : value(value) {}
+
+    std::string genGraphVis(std::string parent) override;
 };
 
 class AST_StringValue : public AST_Value {
@@ -62,7 +66,7 @@ public:
 	std::string value;
     AST_StringValue(std::string value) : value(value) {}
 
-    std::string genGraphVis(std::string parent);
+    std::string genGraphVis(std::string parent) override;
 };
 
 class AST_AndExpression : public AST_Expression {
