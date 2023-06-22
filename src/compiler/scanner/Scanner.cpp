@@ -381,11 +381,11 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[43] =
     {   0,
-        1,    1,   23,   21,    1,    1,   12,   21,   21,   19,
-       20,   15,   13,   14,   16,    5,    8,   21,    2,    2,
-        2,   21,    1,   18,    0,    7,   10,    9,    6,    5,
-       17,    2,    2,    2,   11,    6,    2,    2,    2,    2,
-        2,    0
+        1,    1,   23,   21,    1,    1,   11,   21,   21,   18,
+       19,   14,   12,   13,   15,    4,    7,   21,   20,   20,
+       20,   21,    1,   17,    0,    6,    9,    8,    5,    4,
+       16,   20,   20,   20,   10,    5,   20,   20,   20,    2,
+        3,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -474,7 +474,7 @@ static const flex_int16_t yy_chk[84] =
 /* Table of booleans, true if rule could match eol. */
 static const flex_int32_t yy_rule_can_match_eol[23] =
     {   0,
-1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0,     };
 
 /* The intent behind this definition is that it'll catch
@@ -849,15 +849,15 @@ case 2:
 YY_RULE_SETUP
 #line 20 "src/compiler/scanner/Scanner.l"
 {
-    yylval->idVal = new AST_IdentifierValue(yytext);
-    return IDENTIFIER;
+    yylval->boolVal = new AST_BoolValue(true);
+    return BOOL;
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 25 "src/compiler/scanner/Scanner.l"
 {
-    yylval->boolVal = new AST_BoolValue(true);
+    yylval->boolVal = new AST_BoolValue(false);
     return BOOL;
 }
 	YY_BREAK
@@ -865,99 +865,99 @@ case 4:
 YY_RULE_SETUP
 #line 30 "src/compiler/scanner/Scanner.l"
 {
-    yylval->boolVal = new AST_BoolValue(false);
-    return BOOL;
+    yylval->intVal = new AST_IntegerValue(atoi(yytext));
+    return INTEGER;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 35 "src/compiler/scanner/Scanner.l"
 {
-    yylval->intVal = new AST_IntegerValue(atoi(yytext));
-    return INTEGER;
-}
-	YY_BREAK
-case 6:
-YY_RULE_SETUP
-#line 40 "src/compiler/scanner/Scanner.l"
-{
     yylval->floatVal = new AST_FloatValue(atof(yytext));
     return FLOAT;
 }
 	YY_BREAK
-case 7:
-/* rule 7 can match eol */
+case 6:
+/* rule 6 can match eol */
 YY_RULE_SETUP
-#line 45 "src/compiler/scanner/Scanner.l"
+#line 40 "src/compiler/scanner/Scanner.l"
 {
     yylval->strVal = new AST_StringValue(yytext);
     return STRING;
 }
 	YY_BREAK
+case 7:
+YY_RULE_SETUP
+#line 45 "src/compiler/scanner/Scanner.l"
+return yylval->category = SEMICOLON;
+	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 50 "src/compiler/scanner/Scanner.l"
-return yylval->category = SEMICOLON;
+#line 46 "src/compiler/scanner/Scanner.l"
+return yylval->category = FUNCTIONDEC;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 51 "src/compiler/scanner/Scanner.l"
-return yylval->category = FUNCTIONDEC;
+#line 48 "src/compiler/scanner/Scanner.l"
+return yylval->category = AND;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 53 "src/compiler/scanner/Scanner.l"
-return yylval->category = AND;
+#line 49 "src/compiler/scanner/Scanner.l"
+return yylval->category = OR;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 54 "src/compiler/scanner/Scanner.l"
-return yylval->category = OR;
+#line 50 "src/compiler/scanner/Scanner.l"
+return yylval->category = NOT;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 55 "src/compiler/scanner/Scanner.l"
-return yylval->category = NOT;
+#line 52 "src/compiler/scanner/Scanner.l"
+return yylval->category = ADD;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 57 "src/compiler/scanner/Scanner.l"
-return yylval->category = ADD;
+#line 53 "src/compiler/scanner/Scanner.l"
+return yylval->category = SUBTRACT;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 58 "src/compiler/scanner/Scanner.l"
-return yylval->category = SUBTRACT;
+#line 54 "src/compiler/scanner/Scanner.l"
+return yylval->category = MULTIPLY;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 59 "src/compiler/scanner/Scanner.l"
-return yylval->category = MULTIPLY;
+#line 55 "src/compiler/scanner/Scanner.l"
+return yylval->category = DIVIDE;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 60 "src/compiler/scanner/Scanner.l"
-return yylval->category = DIVIDE;
+#line 57 "src/compiler/scanner/Scanner.l"
+return yylval->category = EQUALS;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 62 "src/compiler/scanner/Scanner.l"
-return yylval->category = EQUALS;
+#line 58 "src/compiler/scanner/Scanner.l"
+return yylval->category = NOTEQUALS;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 63 "src/compiler/scanner/Scanner.l"
-return yylval->category = NOTEQUALS;
+#line 60 "src/compiler/scanner/Scanner.l"
+return yylval->category = LPAREN;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 65 "src/compiler/scanner/Scanner.l"
-return yylval->category = LPAREN;
+#line 61 "src/compiler/scanner/Scanner.l"
+return yylval->category = RPAREN;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 66 "src/compiler/scanner/Scanner.l"
-return yylval->category = RPAREN;
+#line 63 "src/compiler/scanner/Scanner.l"
+{
+    yylval->idVal = new AST_IdentifierValue(yytext);
+    return IDENTIFIER;
+}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
@@ -2171,18 +2171,30 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 #line 77 "src/compiler/scanner/Scanner.l"
 
 
-AST* parse(const char* srcText) {
+AST* parse(const char* srcPath) {
+
+    FILE* srcFile = fopen(srcPath, "r");
+    if (!srcFile) {
+        std::cerr << "Failed to open source file: " 
+                  << srcPath << std::endl;
+        return nullptr;
+    }
+
     AST* result;
 
     yyscan_t scanner;
     yylex_init(&scanner);
+    
     YY_BUFFER_STATE buf;
-    buf = yy_scan_string(srcText, scanner);
+    buf = yy_create_buffer(srcFile, YY_BUF_SIZE, scanner);
+    yy_switch_to_buffer(buf, scanner);
 
     yyparse(&result, scanner);
 
     yy_delete_buffer(buf, scanner);
     yylex_destroy(scanner);
+
+    fclose(srcFile);
 
     return result;
 }

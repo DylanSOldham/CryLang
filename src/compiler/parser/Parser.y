@@ -11,7 +11,6 @@
     AST_StringValue* strVal;
     AST* astVal;
     AST_FunctionBody* functionBodyVal;
-    AST_BindStatement* bindStatementVal;
     AST_Statement* statementVal;
     AST_Expression* exprVal;
     AST_Value* valueVal;
@@ -35,7 +34,9 @@
 
 %type<astVal> program
 %type<functionBodyVal> functionBody
-%type<bindStatementVal> bindStatement
+%type<statementVal> functionDeclareStatement
+%type<statementVal> functionCallStatement
+%type<statementVal> bindStatement
 %type<statementVal> statement
 %type<exprVal> expression 
 %type<valueVal> value
@@ -44,7 +45,7 @@
 
 %code requires {
     #include <iostream>
-    #include "AST.h"
+    #include "../codegen/AST.h"
 
     typedef void* yyscan_t;
 
@@ -67,7 +68,7 @@
 program
     : functionBody {
         *result = new AST();
-        (*result)->body = $1; 
+        (*result)->body = $1;
         $$ = *result;
         return 0; 
       }
@@ -76,11 +77,12 @@ program
 functionBody
     : statement { 
         AST_FunctionBody* body = new AST_FunctionBody();
-        body->statements.push_back($1);
+        body->statements = new std::vector<AST_Statement*>();
+        body->statements->push_back($1);
         $$ = body;
       }
     | functionBody statement { 
-        $1->statements.push_back($2);
+        $1->statements->push_back($2);
         $$ = $1;
       }
     ;
@@ -102,28 +104,27 @@ bindStatement
 
 functionCallStatement
     : IDENTIFIER args SEMICOLON {
-        AST_FunctionCallStatement* functionCallStatement = 
-            new AST_FunctionCallStatement();
-        functionCallStatement->functionName = $1;
-        functionCallStatement->args = $2;
+        auto v = new AST_FunctionCallStatement();
+        v->functionName = $1;
+        v->args = $2;
+        $$ = v;
       }
     ;
 
 functionDeclareStatement
     : IDENTIFIER params FUNCTIONDEC functionBody SEMICOLON {
-        AST_FunctionDeclareStatement* functionDeclareStatement
-            = new AST_FunctionDeclareStatement();
-        functionDeclareStatement->functionName = $1;
-        functionDeclareStatement->params = $2;
-        functionDeclareStatement->functionBody = $4;
+        auto v = new AST_FunctionDeclareStatement();
+        v->functionName = $1;
+        v->params = $2;
+        v->functionBody = $4;
+        $$ = v;
       }
     | IDENTIFIER FUNCTIONDEC functionBody SEMICOLON {
-        AST_FunctionDeclareStatement* functionDeclareStatement
-            = new AST_FunctionDeclareStatement();
-        functionDeclareStatement->functionName = $1;
-        functionDeclareStatement->params 
-            = new std::vector<AST_IdentifierValue*>();
-        functionDeclareStatement->functionBody = $3;
+        auto v = new AST_FunctionDeclareStatement();
+        v->functionName = $1;
+        v->params = new std::vector<AST_IdentifierValue*>();
+        v->functionBody = $3;
+        $$ = v;
       }
     ;
 
@@ -133,7 +134,9 @@ args
         $$ = $1;
       }
     | expression {
-        $$ = new std::vector<AST_Expression*>();
+        auto v = new std::vector<AST_Expression*>();
+        v->push_back($1);
+        $$ = v;
       }
     ;
 
@@ -150,9 +153,7 @@ params
 expression
     : LPAREN expression RPAREN {$$ = $2;}
     | value {
-        auto v = new AST_Value();
-        v->value = $1;
-        $$ = v;
+        $$ = $1;
       } 
     | expression AND expression {
         auto v = new AST_AndExpression();

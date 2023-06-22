@@ -39,14 +39,23 @@ void runCompilation(const std::string& srcDir, const std::string& outDir)
 
 int main(int argc, char** argv) 
 {   
+    std::string srcDir;
+    std::string outDir;
+
     if (argc == 2) 
     {
-        const std::string srcDir = argv[1];
-        const std::string outDir = ".";
-        runCompilation(srcDir, outDir);
-        return 0;
+        srcDir = argv[1];
+        outDir = ".";
+    } else if (argc == 3) 
+    {
+        srcDir = argv[1];
+        outDir = argv[2];
+    } else 
+    {
+        std::cout << "Cry: Malformed command syntax\n";
+        return -1;
     }
 
-    std::cout << "Cry: Malformed command syntax\n";
-    return -1;
+    runCompilation(srcDir, outDir);
+    return 0;
 }

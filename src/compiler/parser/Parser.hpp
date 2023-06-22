@@ -44,10 +44,10 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 45 "src/compiler/parser/Parser.y"
+#line 46 "src/compiler/parser/Parser.y"
 
     #include <iostream>
-    #include "AST.h"
+    #include "../codegen/AST.h"
 
     typedef void* yyscan_t;
 
@@ -95,14 +95,13 @@ union YYSTYPE
     AST_StringValue* strVal;
     AST* astVal;
     AST_FunctionBody* functionBodyVal;
-    AST_BindStatement* bindStatementVal;
     AST_Statement* statementVal;
     AST_Expression* exprVal;
     AST_Value* valueVal;
     std::vector<AST_Expression*>* argsVal;
     std::vector<AST_IdentifierValue*>* paramsVal;
 
-#line 106 "src/compiler/parser/Parser.hpp"
+#line 105 "src/compiler/parser/Parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

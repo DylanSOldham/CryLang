@@ -17,17 +17,12 @@
 
 [[:space:]]*
 
-[[:alpha:]][[:alnum:]]* {
-    yylval->idVal = new AST_IdentifierValue(yytext);
-    return IDENTIFIER;
-}
-
-true {
+"true" {
     yylval->boolVal = new AST_BoolValue(true);
     return BOOL;
 }
 
-false {
+"false" {
     yylval->boolVal = new AST_BoolValue(false);
     return BOOL;
 }
@@ -65,6 +60,11 @@ false {
 "(" return yylval->category = LPAREN;
 ")" return yylval->category = RPAREN;
 
+[[:alpha:]][[:alnum:]]* {
+    yylval->idVal = new AST_IdentifierValue(yytext);
+    return IDENTIFIER;
+}
+
 . {
     std::cerr << "Invalid token on line " << yylineno 
               << ": " << yytext << std::endl;
@@ -76,18 +76,30 @@ false {
 
 %%
 
-AST* parse(const char* srcText) {
+AST* parse(const char* srcPath) {
+
+    FILE* srcFile = fopen(srcPath, "r");
+    if (!srcFile) {
+        std::cerr << "Failed to open source file: " 
+                  << srcPath << std::endl;
+        return nullptr;
+    }
+
     AST* result;
 
     yyscan_t scanner;
     yylex_init(&scanner);
+    
     YY_BUFFER_STATE buf;
-    buf = yy_scan_string(srcText, scanner);
+    buf = yy_create_buffer(srcFile, YY_BUF_SIZE, scanner);
+    yy_switch_to_buffer(buf, scanner);
 
     yyparse(&result, scanner);
 
     yy_delete_buffer(buf, scanner);
     yylex_destroy(scanner);
+
+    fclose(srcFile);
 
     return result;
 }

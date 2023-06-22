@@ -2,9 +2,9 @@
 #define yyHEADER_H 1
 #define yyIN_HEADER 1
 
-#line 6 "Scanner.hpp"
+#line 6 "src/compiler/scanner/Scanner.hpp"
 
-#line 8 "Scanner.hpp"
+#line 8 "src/compiler/scanner/Scanner.hpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -505,6 +505,6 @@ extern int yylex \
 #line 77 "src/compiler/scanner/Scanner.l"
 
 
-#line 509 "Scanner.hpp"
+#line 509 "src/compiler/scanner/Scanner.hpp"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

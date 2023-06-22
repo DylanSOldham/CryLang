@@ -111,10 +111,10 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 45 "src/compiler/parser/Parser.y"
+#line 46 "src/compiler/parser/Parser.y"
 
     #include <iostream>
-    #include "AST.h"
+    #include "../codegen/AST.h"
 
     typedef void* yyscan_t;
 
@@ -162,14 +162,13 @@ union YYSTYPE
     AST_StringValue* strVal;
     AST* astVal;
     AST_FunctionBody* functionBodyVal;
-    AST_BindStatement* bindStatementVal;
     AST_Statement* statementVal;
     AST_Expression* exprVal;
     AST_Value* valueVal;
     std::vector<AST_Expression*>* argsVal;
     std::vector<AST_IdentifierValue*>* paramsVal;
 
-#line 173 "src/compiler/parser/Parser.cpp"
+#line 172 "src/compiler/parser/Parser.cpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -185,12 +184,12 @@ int yyparse (AST** result, yyscan_t scanner);
 
 
 /* Unqualified %code blocks.  */
-#line 54 "src/compiler/parser/Parser.y"
+#line 55 "src/compiler/parser/Parser.y"
 
     extern int yylex(YYSTYPE* yylval_param, yyscan_t scanner);
     extern void setupScan(const char* srcText);
 
-#line 194 "src/compiler/parser/Parser.cpp"
+#line 193 "src/compiler/parser/Parser.cpp"
 
 #ifdef short
 # undef short
@@ -552,10 +551,10 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    68,    68,    77,    82,    89,    90,    91,    95,   104,
-     113,   120,   131,   135,   141,   145,   151,   152,   157,   163,
-     169,   175,   181,   186,   192,   198,   204,   213,   214,   215,
-     216,   217
+       0,    69,    69,    78,    84,    91,    92,    93,    97,   106,
+     115,   122,   132,   136,   144,   148,   154,   155,   158,   164,
+     170,   176,   182,   187,   193,   199,   205,   214,   215,   216,
+     217,   218
 };
 #endif
 
@@ -1397,232 +1396,232 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 68 "src/compiler/parser/Parser.y"
+#line 69 "src/compiler/parser/Parser.y"
                    {
         *result = new AST();
-        (*result)->body = (yyvsp[0].functionBodyVal); 
+        (*result)->body = (yyvsp[0].functionBodyVal);
         (yyval.astVal) = *result;
         return 0; 
       }
-#line 1408 "src/compiler/parser/Parser.cpp"
+#line 1407 "src/compiler/parser/Parser.cpp"
     break;
 
   case 3:
-#line 77 "src/compiler/parser/Parser.y"
+#line 78 "src/compiler/parser/Parser.y"
                 { 
         AST_FunctionBody* body = new AST_FunctionBody();
-        body->statements.push_back((yyvsp[0].statementVal));
+        body->statements = new std::vector<AST_Statement*>();
+        body->statements->push_back((yyvsp[0].statementVal));
         (yyval.functionBodyVal) = body;
       }
 #line 1418 "src/compiler/parser/Parser.cpp"
     break;
 
   case 4:
-#line 82 "src/compiler/parser/Parser.y"
+#line 84 "src/compiler/parser/Parser.y"
                              { 
-        (yyvsp[-1].functionBodyVal)->statements.push_back((yyvsp[0].statementVal));
+        (yyvsp[-1].functionBodyVal)->statements->push_back((yyvsp[0].statementVal));
         (yyval.functionBodyVal) = (yyvsp[-1].functionBodyVal);
       }
 #line 1427 "src/compiler/parser/Parser.cpp"
     break;
 
   case 8:
-#line 95 "src/compiler/parser/Parser.y"
+#line 97 "src/compiler/parser/Parser.y"
                                              {
         AST_BindStatement* bindStatement = new AST_BindStatement();
         bindStatement->lhs = (yyvsp[-3].idVal);
         bindStatement->rhs = (yyvsp[-1].exprVal);
-        (yyval.bindStatementVal) = bindStatement;
+        (yyval.statementVal) = bindStatement;
       }
 #line 1438 "src/compiler/parser/Parser.cpp"
     break;
 
   case 9:
-#line 104 "src/compiler/parser/Parser.y"
+#line 106 "src/compiler/parser/Parser.y"
                                 {
-        AST_FunctionCallStatement* functionCallStatement = 
-            new AST_FunctionCallStatement();
-        functionCallStatement->functionName = (yyvsp[-2].idVal);
-        functionCallStatement->args = (yyvsp[-1].argsVal);
+        auto v = new AST_FunctionCallStatement();
+        v->functionName = (yyvsp[-2].idVal);
+        v->args = (yyvsp[-1].argsVal);
+        (yyval.statementVal) = v;
       }
 #line 1449 "src/compiler/parser/Parser.cpp"
     break;
 
   case 10:
-#line 113 "src/compiler/parser/Parser.y"
+#line 115 "src/compiler/parser/Parser.y"
                                                            {
-        AST_FunctionDeclareStatement* functionDeclareStatement
-            = new AST_FunctionDeclareStatement();
-        functionDeclareStatement->functionName = (yyvsp[-4].idVal);
-        functionDeclareStatement->params = (yyvsp[-3].paramsVal);
-        functionDeclareStatement->functionBody = (yyvsp[-1].functionBodyVal);
+        auto v = new AST_FunctionDeclareStatement();
+        v->functionName = (yyvsp[-4].idVal);
+        v->params = (yyvsp[-3].paramsVal);
+        v->functionBody = (yyvsp[-1].functionBodyVal);
+        (yyval.statementVal) = v;
       }
 #line 1461 "src/compiler/parser/Parser.cpp"
     break;
 
   case 11:
-#line 120 "src/compiler/parser/Parser.y"
+#line 122 "src/compiler/parser/Parser.y"
                                                     {
-        AST_FunctionDeclareStatement* functionDeclareStatement
-            = new AST_FunctionDeclareStatement();
-        functionDeclareStatement->functionName = (yyvsp[-3].idVal);
-        functionDeclareStatement->params 
-            = new std::vector<AST_IdentifierValue*>();
-        functionDeclareStatement->functionBody = (yyvsp[-1].functionBodyVal);
+        auto v = new AST_FunctionDeclareStatement();
+        v->functionName = (yyvsp[-3].idVal);
+        v->params = new std::vector<AST_IdentifierValue*>();
+        v->functionBody = (yyvsp[-1].functionBodyVal);
+        (yyval.statementVal) = v;
       }
-#line 1474 "src/compiler/parser/Parser.cpp"
+#line 1473 "src/compiler/parser/Parser.cpp"
     break;
 
   case 12:
-#line 131 "src/compiler/parser/Parser.y"
+#line 132 "src/compiler/parser/Parser.y"
                       {
         (yyvsp[-1].argsVal)->push_back((yyvsp[0].exprVal));
         (yyval.argsVal) = (yyvsp[-1].argsVal);
       }
-#line 1483 "src/compiler/parser/Parser.cpp"
+#line 1482 "src/compiler/parser/Parser.cpp"
     break;
 
   case 13:
-#line 135 "src/compiler/parser/Parser.y"
+#line 136 "src/compiler/parser/Parser.y"
                  {
-        (yyval.argsVal) = new std::vector<AST_Expression*>();
+        auto v = new std::vector<AST_Expression*>();
+        v->push_back((yyvsp[0].exprVal));
+        (yyval.argsVal) = v;
       }
-#line 1491 "src/compiler/parser/Parser.cpp"
+#line 1492 "src/compiler/parser/Parser.cpp"
     break;
 
   case 14:
-#line 141 "src/compiler/parser/Parser.y"
+#line 144 "src/compiler/parser/Parser.y"
                         {
         (yyvsp[-1].paramsVal)->push_back((yyvsp[0].idVal));
         (yyval.paramsVal) = (yyvsp[-1].paramsVal);
       }
-#line 1500 "src/compiler/parser/Parser.cpp"
+#line 1501 "src/compiler/parser/Parser.cpp"
     break;
 
   case 15:
-#line 145 "src/compiler/parser/Parser.y"
+#line 148 "src/compiler/parser/Parser.y"
                  {
         (yyval.paramsVal) = new std::vector<AST_IdentifierValue*>();
       }
-#line 1508 "src/compiler/parser/Parser.cpp"
+#line 1509 "src/compiler/parser/Parser.cpp"
     break;
 
   case 16:
-#line 151 "src/compiler/parser/Parser.y"
+#line 154 "src/compiler/parser/Parser.y"
                                {(yyval.exprVal) = (yyvsp[-1].exprVal);}
-#line 1514 "src/compiler/parser/Parser.cpp"
+#line 1515 "src/compiler/parser/Parser.cpp"
     break;
 
   case 17:
-#line 152 "src/compiler/parser/Parser.y"
+#line 155 "src/compiler/parser/Parser.y"
             {
-        auto v = new AST_Value();
-        v->value = (yyvsp[0].valueVal);
-        (yyval.exprVal) = v;
+        (yyval.exprVal) = (yyvsp[0].valueVal);
       }
-#line 1524 "src/compiler/parser/Parser.cpp"
+#line 1523 "src/compiler/parser/Parser.cpp"
     break;
 
   case 18:
-#line 157 "src/compiler/parser/Parser.y"
+#line 158 "src/compiler/parser/Parser.y"
                                 {
         auto v = new AST_AndExpression();
         v->lhs = (yyvsp[-2].exprVal);
         v->rhs = (yyvsp[0].exprVal);
         (yyval.exprVal) = v;
       }
-#line 1535 "src/compiler/parser/Parser.cpp"
+#line 1534 "src/compiler/parser/Parser.cpp"
     break;
 
   case 19:
-#line 163 "src/compiler/parser/Parser.y"
+#line 164 "src/compiler/parser/Parser.y"
                                {
         auto v = new AST_OrExpression();
         v->lhs = (yyvsp[-2].exprVal);
         v->rhs = (yyvsp[0].exprVal);
         (yyval.exprVal) = v;
       }
-#line 1546 "src/compiler/parser/Parser.cpp"
+#line 1545 "src/compiler/parser/Parser.cpp"
     break;
 
   case 20:
-#line 169 "src/compiler/parser/Parser.y"
+#line 170 "src/compiler/parser/Parser.y"
                                    {
         auto v = new AST_EqualsExpression();
         v->lhs = (yyvsp[-2].exprVal);
         v->rhs = (yyvsp[0].exprVal);
         (yyval.exprVal) = v;
       }
-#line 1557 "src/compiler/parser/Parser.cpp"
+#line 1556 "src/compiler/parser/Parser.cpp"
     break;
 
   case 21:
-#line 175 "src/compiler/parser/Parser.y"
+#line 176 "src/compiler/parser/Parser.y"
                                       {
         auto v = new AST_NotEqualsExpression();
         v->lhs = (yyvsp[-2].exprVal);
         v->rhs = (yyvsp[0].exprVal);
         (yyval.exprVal) = v;
       }
-#line 1568 "src/compiler/parser/Parser.cpp"
+#line 1567 "src/compiler/parser/Parser.cpp"
     break;
 
   case 22:
-#line 181 "src/compiler/parser/Parser.y"
+#line 182 "src/compiler/parser/Parser.y"
                      {
         auto v = new AST_NotExpression();
         v->negated = (yyvsp[0].exprVal);
         (yyval.exprVal) = v;
       }
-#line 1578 "src/compiler/parser/Parser.cpp"
+#line 1577 "src/compiler/parser/Parser.cpp"
     break;
 
   case 23:
-#line 186 "src/compiler/parser/Parser.y"
+#line 187 "src/compiler/parser/Parser.y"
                                 {
         auto v = new AST_AddExpression();
         v->lhs = (yyvsp[-2].exprVal);
         v->rhs = (yyvsp[0].exprVal);
         (yyval.exprVal) = v;
       }
-#line 1589 "src/compiler/parser/Parser.cpp"
+#line 1588 "src/compiler/parser/Parser.cpp"
     break;
 
   case 24:
-#line 192 "src/compiler/parser/Parser.y"
+#line 193 "src/compiler/parser/Parser.y"
                                      {
         auto v = new AST_SubtractExpression();
         v->lhs = (yyvsp[-2].exprVal);
         v->rhs = (yyvsp[0].exprVal);
         (yyval.exprVal) = v;
       }
-#line 1600 "src/compiler/parser/Parser.cpp"
+#line 1599 "src/compiler/parser/Parser.cpp"
     break;
 
   case 25:
-#line 198 "src/compiler/parser/Parser.y"
+#line 199 "src/compiler/parser/Parser.y"
                                      {
         auto v = new AST_MultiplyExpression();
         v->lhs = (yyvsp[-2].exprVal);
         v->rhs = (yyvsp[0].exprVal);
         (yyval.exprVal) = v;
       }
-#line 1611 "src/compiler/parser/Parser.cpp"
+#line 1610 "src/compiler/parser/Parser.cpp"
     break;
 
   case 26:
-#line 204 "src/compiler/parser/Parser.y"
+#line 205 "src/compiler/parser/Parser.y"
                                    {
         auto v = new AST_AddExpression();
         v->lhs = (yyvsp[-2].exprVal);
         v->rhs = (yyvsp[0].exprVal);
         (yyval.exprVal) = v;
       }
-#line 1622 "src/compiler/parser/Parser.cpp"
+#line 1621 "src/compiler/parser/Parser.cpp"
     break;
 
 
-#line 1626 "src/compiler/parser/Parser.cpp"
+#line 1625 "src/compiler/parser/Parser.cpp"
 
       default: break;
     }
@@ -1854,7 +1853,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 220 "src/compiler/parser/Parser.y"
+#line 221 "src/compiler/parser/Parser.y"
 
 
 void yyerror(AST** result, yyscan_t scanner, const char* error)
