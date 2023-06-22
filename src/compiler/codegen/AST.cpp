@@ -6,6 +6,10 @@ std::string AST_IdentifierValue::genGraphVis(std::string parent)
                   + "_" + identifier + "\n";
 }
 
+std::string AST_IntegerValue::genGraphVis(std::string parent) {
+    return parent + " -> " + std::to_string(value) + "\n";
+}
+
 std::string AST_StringValue::genGraphVis(std::string parent)
 {
     std::string nodeName = "\"STRING" + std::to_string(AST::nodeId++)

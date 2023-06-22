@@ -47,6 +47,8 @@ class AST_IntegerValue : public AST_Value {
 public:
 	int value;
     AST_IntegerValue(int value) : value(value) {}
+
+    std::string genGraphVis(std::string parent) override;
 };
 
 class AST_FloatValue : public AST_Value {
