@@ -27,6 +27,8 @@
     return BOOL;
 }
 
+"return" return yylval->category = RETURN;
+
 [0-9]+ {
     yylval->intVal = new AST_IntegerValue(atoi(yytext));
     return INTEGER;
@@ -94,7 +96,12 @@ AST* parse(const char* srcPath) {
     buf = yy_create_buffer(srcFile, YY_BUF_SIZE, scanner);
     yy_switch_to_buffer(buf, scanner);
 
-    yyparse(&result, scanner);
+    yydebug = 1;
+    int status = yyparse(&result, scanner);
+    if (status != 0) {
+        std::cout << "There was a problem with parsing: " 
+                  << status << std::endl;
+    }
 
     yy_delete_buffer(buf, scanner);
     yylex_destroy(scanner);

@@ -23,7 +23,7 @@ $(SCANDIR)/Scanner.cpp: $(SCANDIR)/Scanner.l $(PARSEDIR)/Parser.hpp
 	flex --header-file=$(SCANDIR)/Scanner.hpp -o $(SCANDIR)/Scanner.cpp $(SCANDIR)/Scanner.l
 
 $(PARSEDIR)/Parser.cpp $(PARSEDIR)/Parser.hpp: $(PARSEDIR)/Parser.y
-	bison -d -o $(PARSEDIR)/Parser.cpp $(PARSEDIR)/Parser.y
+	bison -Wcex -d -o $(PARSEDIR)/Parser.cpp $(PARSEDIR)/Parser.y
 
 build/%.o: %.cpp
 	mkdir -p $(dir $@)

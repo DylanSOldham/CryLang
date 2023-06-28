@@ -502,7 +502,7 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 77 "src/compiler/scanner/Scanner.l"
+#line 79 "src/compiler/scanner/Scanner.l"
 
 
 #line 509 "src/compiler/scanner/Scanner.hpp"

@@ -65,6 +65,18 @@ std::string AST_FunctionDeclareStatement::genGraphVis(std::string parent)
     return result.str();
 }
 
+std::string AST_ReturnStatement::genGraphVis(std::string parent)
+{
+    std::stringstream result;
+
+    std::string nodeName = "RETURN" + std::to_string(AST::nodeId++);
+
+    result << parent << " -> " << nodeName << "\n";
+    result << value->genGraphVis(nodeName);
+
+    return result.str();
+}
+
 std::string AST_FunctionBody::genGraphVis(std::string parent) 
 {
     std::stringstream result;

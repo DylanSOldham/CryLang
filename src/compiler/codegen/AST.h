@@ -154,6 +154,14 @@ public:
     std::string toString() {return "FunctionDeclareStatement";}
 };
 
+class AST_ReturnStatement : public AST_Statement {
+public:
+    AST_Expression* value;
+
+    std::string genGraphVis(std::string parent) override;
+    std::string toString() {return "ReturnStatment";}
+};
+
 class AST_FunctionBody : AST_Node {
 public:
     std::vector<AST_Statement*>* statements;

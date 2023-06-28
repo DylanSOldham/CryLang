@@ -1,6 +1,7 @@
 %{%}
 %define api.pure full
 %define parse.error verbose
+%define parse.trace
 
 %union {
     int category;
@@ -15,7 +16,7 @@
     AST_Expression* exprVal;
     AST_Value* valueVal;
     std::vector<AST_Expression*>* argsVal;
-    std::vector<AST_IdentifierValue*>* paramsVal;
+    std::vector<AST_IdentifierValue*>* idListVal;
 }
 
 %token <idVal> IDENTIFIER;
@@ -26,21 +27,24 @@
 
 %token <category> ADD SUBTRACT MULTIPLY DIVIDE
 %token <category> AND OR NOT EQUALS NOTEQUALS
-%token <category> SEMICOLON LPAREN RPAREN
+%token <category> RETURN SEMICOLON LPAREN RPAREN
 %token <category> FUNCTIONDEC
 
+%left AND OR NOT EQUALS NOTEQUALS
 %left ADD SUBTRACT
 %left MULTIPLY DIVIDE
+%right IDENTIFIER LPAREN INTEGER FLOAT BOOL STRING
 
 %type<astVal> program
 %type<functionBodyVal> functionBody
+%type<statementVal> returnStatement;
 %type<statementVal> functionDeclareStatement
 %type<statementVal> functionCallStatement
 %type<statementVal> bindStatement
 %type<statementVal> statement
 %type<exprVal> expression 
 %type<valueVal> value
-%type<paramsVal> params
+%type<idListVal> idList
 %type<argsVal> args
 
 %code requires {
@@ -70,20 +74,18 @@ program
         *result = new AST();
         (*result)->body = $1;
         $$ = *result;
-        return 0; 
       }
     ;
 
 functionBody
-    : statement { 
-        AST_FunctionBody* body = new AST_FunctionBody();
-        body->statements = new std::vector<AST_Statement*>();
-        body->statements->push_back($1);
-        $$ = body;
-      }
-    | functionBody statement { 
+    : functionBody statement { 
         $1->statements->push_back($2);
         $$ = $1;
+      }
+    | %empty { 
+        AST_FunctionBody* body = new AST_FunctionBody();
+        body->statements = new std::vector<AST_Statement*>();
+        $$ = body;
       }
     ;
 
@@ -91,6 +93,7 @@ statement
     : bindStatement
     | functionCallStatement
     | functionDeclareStatement
+    | returnStatement
     ;
 
 bindStatement
@@ -112,19 +115,28 @@ functionCallStatement
     ;
 
 functionDeclareStatement
-    : IDENTIFIER params FUNCTIONDEC functionBody SEMICOLON {
+    : IDENTIFIER idList FUNCTIONDEC functionBody SEMICOLON {
         auto v = new AST_FunctionDeclareStatement();
         v->functionName = $1;
         v->params = $2;
         v->functionBody = $4;
         $$ = v;
       }
-    | IDENTIFIER FUNCTIONDEC functionBody SEMICOLON {
-        auto v = new AST_FunctionDeclareStatement();
-        v->functionName = $1;
-        v->params = new std::vector<AST_IdentifierValue*>();
-        v->functionBody = $3;
+    ;
+
+returnStatement
+    : RETURN expression SEMICOLON {
+        auto v = new AST_ReturnStatement();
+        v->value = $2;
         $$ = v;
+    }
+
+idList
+    : idList IDENTIFIER {
+        $1->push_back($2);
+      }
+    | %empty {
+        $$ = new std::vector<AST_IdentifierValue*>();
       }
     ;
 
@@ -133,28 +145,17 @@ args
         $1->push_back($2);
         $$ = $1;
       }
-    | expression {
-        auto v = new std::vector<AST_Expression*>();
-        v->push_back($1);
-        $$ = v;
-      }
-    ;
-
-params
-    : params IDENTIFIER {
-        $1->push_back($2);
-        $$ = $1;
-      }
-    | IDENTIFIER {
-        $$ = new std::vector<AST_IdentifierValue*>();
+    | idList %prec IDENTIFIER {
+        $$ = new std::vector<AST_Expression*>();
+        for (auto v : *$1) {
+            $$->push_back(v);
+        }  
       }
     ;
 
 expression
     : LPAREN expression RPAREN {$$ = $2;}
-    | value {
-        $$ = $1;
-      } 
+    | value 
     | expression AND expression {
         auto v = new AST_AndExpression();
         v->lhs = $1;
